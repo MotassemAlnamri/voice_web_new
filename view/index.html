@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html>
+<head> 
+ <meta charset="utf-8" />
+ <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+   <link rel="stylesheet" href="https://unicons.iconscout.com/release/v4.0.0/css/line.css"/>
+  <script src="https://kit.fontawesome.com/c4254e24a8.js" crossorigin="anonymous"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.3.0/css/all.min.css">
+  <title>  Web Common voice </title>
+
+
+  <link rel="stylesheet" href="stylesVoice.css">
+
+
+</head>
+<body>
+
+   
+<header class="header">
+	<a href="#" class="logo">Voice.<span class="animate" style="--i:1;"></span> </a>
+
+	<nav class="navbar">
+		<a href="#" class="active">Home</a>
+		<a href="#">About</a>
+		<a href="#">Evaluation</a>
+		<a href="#">Services</a>
+		<a href="#">Contact</a>
+		<span class="animate" style="--i:2;"></span>
+
+
+	</nav>
+
+
+	<a href="#" class="btn sign-up">Sign up<span class="animate" style="--i:3;"></span>
+</a>
+	
+</header> 
+
+
+<section class="home">
+
+      <span class="animate bg"></span>
+
+      <div  style="width: 1200px; ">
+
+
+
+        <div>
+          <button class="mic">
+              <i class="mic-icon"></i>
+              <div class="mic-shadow"></div>
+          </button>
+        </div>
+     
+      </div>
+      <div><ul class="recordings-list"></ul></div>
+
+	    <div class="home-content">
+            <h1>الاصوات اليمنية <span class="animate" style="--i:4;" ></h1>
+            <h1>بجميع اللهجات<span class="animate" style="--i:5;"></h1>
+            <h1>الصوتية<span class="animate" style="--i:6;"></h1>
+
+            <p> أصوات طبيعية، وهي بشرية. هذا هو السبب الذي يحفّزنا لإنشاء تقنية صوتية يمكن استخدامها على أجهزتنا. 
+                    إلا أنها تحتوي على أنظمة صوتية كهذه، ويحتاج المطوّرون إلى كمية كبيرة جدًا من البيانات الصوتية.!<span class="animate" style="--i:7;"></p>
+
+           <div class="btn-box">
+              <button id="record-button" class="btn" >ابدا</button>
+              <button id="stopButton" class="btn" onclick="stopRecording()">توقف</button>
+              <span class="animate" style="--i:8;">
+              
+           </div>
+           
+	</div>
+
+</section>
+
+
+<script>
+
+    // JavaScript code
+    window.addEventListener('DOMContentLoaded', () => {
+      const recordButton = document.querySelector('.mic');
+      const recordingsList = document.querySelector('.recordings-list');
+
+      let mediaRecorder; // MediaRecorder object
+      let chunks = []; // Recorded audio chunks
+
+      // Start recording when the record button is clicked
+      recordButton.addEventListener('click', async () => {
+        if (mediaRecorder && mediaRecorder.state === 'recording') {
+          mediaRecorder.stop();
+          // recordButton.textContent = '▶ Start Recording';
+              const newWidth = '130px';
+              const newHeight = '130px';
+              const newColorMic = '#554386';
+
+              document.documentElement.style.setProperty('--box-width', newWidth);
+              document.documentElement.style.setProperty('--box-height', newHeight);
+              document.documentElement.style.setProperty('--color-mic', newColorMic);
+
+        } else {
+          await navigator.mediaDevices.getUserMedia({ audio: true })
+            .then(stream => {
+              mediaRecorder = new MediaRecorder(stream);
+
+              mediaRecorder.addEventListener('dataavailable', e => {
+                chunks.push(e.data);
+              });
+
+              mediaRecorder.addEventListener('stop', async () => {
+                    const recording = new Blob(chunks, { type: 'audio/mp3' });
+                    chunks = [];
+
+                    const formData = new FormData();
+                    formData.append('audio', recording, 'recording.mp3');
+                   
+
+                    await fetch('http://localhost:3000/upload-audio', {
+                        method: 'POST',
+                        body: formData
+                    })
+                    .then(response => {
+                        // Handle server response
+                        console.log('Audio uploaded successfully!');
+                    })
+                    .catch(error => {
+                        console.error('Error uploading audio:', error);
+                    });
+
+                    const recordingURL = URL.createObjectURL(recording);
+                    const li = document.createElement('li');
+                    const audio = document.createElement('audio');
+
+                    audio.setAttribute('controls', '');
+                    audio.src = recordingURL;
+
+                    li.appendChild(audio);
+                    recordingsList.appendChild(li);
+                    });
+
+              mediaRecorder.start();
+
+              //wait for some time 
+
+              // recordButton.textContent = '■ Stop Recording';
+
+
+              const newWidth = '160px';
+          const newHeight = '160px';
+          const newColorMic = '#20ac56';
+
+          document.documentElement.style.setProperty('--box-width', newWidth);
+          document.documentElement.style.setProperty('--box-height', newHeight);
+          document.documentElement.style.setProperty('--color-mic', newColorMic);
+
+            })
+        
+            .catch(error => {
+              console.error('Error accessing microphone:', error);
+            });
+        }
+      });
+    });
+
+</script>
+
+
+</body>
+</html>
