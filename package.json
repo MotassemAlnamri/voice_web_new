@@ -2,16 +2,15 @@
   "name": "voice-web",
   "version": "1.0.0",
   "description": "",
-
   "scripts": {
-    "start": "node server/server.js"
+    "start-client": "open view/index.html",
+    "start": "concurrently \"node server/server.js\" \"npm run start-client\""
   },
   "engines": {
-    "node":"20.x"
+    "node": "20.x"
   },
-
-
   "dependencies": {
+    "concurrently": "^8.2.2",
     "express": "^4.18.3",
     "fluent-ffmpeg": "^2.1.2",
     "fs-extra": "^11.2.0",

@@ -1,7 +1,0 @@
-
-تثبيت المكتبة fluent-ffmpeg باستخدام npm:
-npm install fluent-ffmpeg
-
-
-يرجى ملاحظة أنه يجب تثبيت مكتبة fs-extra قبل استخدام fs.writeFile في بيئة Node.js. يمكنك تثبيتها باستخدام npm بالأمر التالي:
-npm install fs-extra
